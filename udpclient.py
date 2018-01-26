@@ -18,6 +18,7 @@ if (host != '127.0.0.1'):
 port = int(raw_input('Please enter port: '))
 if (port < 1 or port > 65535):
     print 'Invalid port'
+    sys.exit(0)
 
 # Create socket
 socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
