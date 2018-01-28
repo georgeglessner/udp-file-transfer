@@ -7,9 +7,11 @@ Python Version: 2.7
 '''
 
 import socket, sys
+import os
 
 # All available interfaces
 host = ''
+buffer = 1024
 
 # Obtain port address to connect to
 port = int(raw_input('Please enter port: '))
@@ -29,7 +31,22 @@ while 1:
     print 'Received', data
     if not data:
         break
-    socket.sendto(data, (host, port))
 
+    # Checks if file exists in current directory
+    if os.path.isfile(data):
+        print 'File exists'
+        f = open(data, "r")
+        data = f.read(buffer)
+        if socket.sendto(data, (host, port)):
+            print "sending..."
+            data = f.read(buffer)
+        f.close()
+    else:
+        data = 'File not found'
+        print data
+
+
+    # Send data back to client
+    
 # Close connection
 socket.close()
