@@ -1,12 +1,16 @@
-#! usr/bin/env python
-
 '''
 Reliable File Transfer using UDP
 Author: George Glessner, Jacob Craffey
 Python Version: 2.7
 '''
+# ----- sender.py ------
 
-import socket, sys
+#!/usr/bin/env python
+
+from socket import *
+import sys
+
+s = socket(AF_INET,SOCK_DGRAM)
 
 # Obtain IP Address, should be local host
 host = raw_input('Please enter IP Address: ')
@@ -20,20 +24,19 @@ if (port < 1 or port > 65535):
     print 'Invalid port'
     sys.exit(0)
 
-# Create socket
-socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+buf =1024
+addr = (host,port)
 
 # Obtain filename
-filename = raw_input('Please enter a filename to transfer: ')
+file_name = raw_input('Please enter a filename to transfer: ')
 
-# Send file
-socket.sendto(filename, (host, port))
+s.sendto(file_name,addr)
 
-# Receive data
-data = socket.recvfrom(1024)
-
-# Close socket
-socket.close()
-
-# Print received message
-print 'Received ', data[0]
+f=open(file_name,"rb")
+data = f.read(buf)
+while (data):
+    if(s.sendto(data,addr)):
+        print "sending ..."
+        data = f.read(buf)
+s.close()
+f.close()
