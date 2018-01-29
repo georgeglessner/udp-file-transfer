@@ -19,9 +19,14 @@ if (host != '127.0.0.1'):
     sys.exit(0)
 
 # Obtain port address to connect to
-port = int(raw_input('Please enter port: '))
+try:
+    port = int(raw_input('Please Enter Port: '))
+except ValueError:
+    print 'Invalid Port'
+    sys.exit(0)
+
 if (port < 1 or port > 65535):
-    print 'Invalid port'
+    print 'Invalid Port'
     sys.exit(0)
 
 buf =1024
@@ -31,12 +36,14 @@ addr = (host,port)
 file_name = raw_input('Please enter a filename to transfer: ')
 
 s.sendto(file_name,addr)
-
-f=open(file_name,"rb")
-data = f.read(buf)
-while (data):
-    if(s.sendto(data,addr)):
-        print "sending ..."
-        data = f.read(buf)
+try:
+    f=open(file_name,"rb")
+    data = f.read(buf)
+    while (data):
+        if(s.sendto(data,addr)):
+            print "sending ..."
+            data = f.read(buf)
+    f.close()
+except:
+    print file_name + ' is not a valid file'
 s.close()
-f.close()

@@ -9,14 +9,21 @@ Python Version: 2.7
 from socket import *
 import sys
 import select
+import math
 
 host= ''
 
 # Obtain port address to connect to
-port = int(raw_input('Please enter port: '))
-if (port < 1 or port > 65535):
-    print 'Invalid port'
+try:
+    port = int(raw_input('Please Enter Port: '))
+except ValueError:
+    print 'Invalid Port'
     sys.exit(0)
+
+if (port < 1 or port > 65535):
+    print 'Invalid Port'
+    sys.exit(0)
+
     
 s = socket(AF_INET,SOCK_DGRAM)
 s.bind((host,port))
