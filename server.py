@@ -9,7 +9,6 @@ Python Version: 2.7
 from socket import *
 import sys
 import select
-import math
 
 host= ''
 
@@ -32,16 +31,15 @@ addr = (host,port)
 buf=1024
 
 data,addr = s.recvfrom(buf)
-print "Received File:",data.strip()
-f = open('client_file','wb')
-
-data,addr = s.recvfrom(buf)
+file_name = data.strip()
+print "Received File:", file_name
 try:
-    while(data):
-        f.write(data)
-        s.settimeout(10)
-        data,addr = s.recvfrom(buf)
-except timeout:
+    f=open(file_name,"rb")
+    data = f.read(buf)
+    while (data):
+        if(s.sendto(data,addr)):
+            print "sending ..."
+            data = f.read(buf)
     f.close()
-    s.close()
-    print "File Downloaded"
+except:
+    print file_name + ' is not a valid file'

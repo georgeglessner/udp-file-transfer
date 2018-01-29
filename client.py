@@ -36,14 +36,15 @@ addr = (host,port)
 file_name = raw_input('Please enter a filename to transfer: ')
 
 s.sendto(file_name,addr)
+data,addr = s.recvfrom(buf)
+f = open('client_file', "wb")
 try:
-    f=open(file_name,"rb")
-    data = f.read(buf)
-    while (data):
-        if(s.sendto(data,addr)):
-            print "sending ..."
-            data = f.read(buf)
+    while(data):
+        f.write(data)
+        s.settimeout(2)
+        data,addr = s.recvfrom(buf)
+except timeout:
     f.close()
-except:
-    print file_name + ' is not a valid file'
+    s.close()
+    print "File Downloaded"
 s.close()
