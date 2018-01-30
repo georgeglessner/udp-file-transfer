@@ -47,10 +47,13 @@ while 1:
 
     # send ack to server
     s.sendto(str(header[0]), addr)
-    print "Sending ACK for packet ", header[0]
+    if header[0] == '99999':
+        print "Sending last ACK"
+    else:
+        print "Sending ACK for packet ", header[0]
 
     # last packet
-    if header[0] == '81':
+    if header[0] == '99999':
         break
 
 fileStr = ''

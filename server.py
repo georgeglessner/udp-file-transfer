@@ -37,13 +37,14 @@ file_name = data.strip()
 print "Received File:", file_name
 
 f = open(file_name, "rb")
-packet_size = 1000
+packet_size = 64
 packet_id = 0
 packet_list = []
 file_size = os.path.getsize(file_name)
 num_packets = math.ceil(float(file_size) / float(packet_size))
 WINDOW_LENGTH = 5
 
+print num_packets
 with open(file_name, 'r') as newFile:
     # create header info
     for i in range(WINDOW_LENGTH):
@@ -74,7 +75,9 @@ with open(file_name, 'r') as newFile:
             # last packet
             if packet_id == num_packets:
                 print "Sending last packet"
-                s.sendto(str(data), addr)
+                data = data.split('|', 1)
+                last_data = '99999' + '|' + data[1]
+                s.sendto(str(last_data), addr)
 
                 break
 
