@@ -37,7 +37,7 @@ file_name = data.strip()
 print "Received File:", file_name
 
 f = open(file_name, "rb")
-packet_size = 64
+packet_size = 500
 packet_id = 0
 packet_list = []
 file_size = os.path.getsize(file_name)

@@ -9,6 +9,7 @@ Python Version: 2.7
 
 from socket import *
 import sys
+import os
 
 s = socket(AF_INET, SOCK_DGRAM)
 
@@ -34,6 +35,9 @@ addr = (host, port)
 
 # Obtain filename
 file_name = raw_input('Please enter a filename to transfer: ')
+if not os.path.exists('./' + str(file_name)):
+    print "Invalid file"
+    sys.exit(0)
 
 # send file request to server
 s.sendto(file_name, addr)
