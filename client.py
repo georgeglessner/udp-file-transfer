@@ -3,14 +3,14 @@ Reliable File Transfer using UDP
 Author: George Glessner, Jacob Craffey
 Python Version: 2.7
 '''
-# ----- sender.py ------
+# ----- client.py ------
 
 #!/usr/bin/env python
 
 from socket import *
 import sys
 
-s = socket(AF_INET,SOCK_DGRAM)
+s = socket(AF_INET, SOCK_DGRAM)
 
 # Obtain IP Address, should be local host
 host = raw_input('Please enter IP Address: ')
@@ -29,22 +29,36 @@ if (port < 1 or port > 65535):
     print 'Invalid Port'
     sys.exit(0)
 
-buf =1024
-addr = (host,port)
+buf = 1000
+addr = (host, port)
 
 # Obtain filename
 file_name = raw_input('Please enter a filename to transfer: ')
 
-s.sendto(file_name,addr)
-data,addr = s.recvfrom(buf)
+# send file request to server
+s.sendto(file_name, addr)
+packetList = []
+
+while 1:
+    # receive data from server
+    packetData, addr = s.recvfrom(buf)
+    header = packetData.split('|', 1)
+    packetList.append(header[1])
+
+    # send ack to server
+    s.sendto(str(header[0]), addr)
+    print "Sending ACK for packet ", header[0]
+
+    # last packet
+    if header[0] == '999':
+        break
+
+fileStr = ''
+for packet in packetList:
+    fileStr += packet
 f = open('client_file', "wb")
-try:
-    while(data):
-        f.write(data)
-        s.settimeout(2)
-        data,addr = s.recvfrom(buf)
-except timeout:
-    f.close()
-    s.close()
-    print "File Downloaded"
+f.write(fileStr)
+print "File complete"
+
+
 s.close()
