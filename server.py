@@ -30,7 +30,7 @@ s = socket(AF_INET, SOCK_DGRAM)
 s.bind((host, port))
 
 addr = (host, port)
-buf = 1024
+buf = 1000
 
 data, addr = s.recvfrom(buf)
 file_name = data.strip()
@@ -44,7 +44,6 @@ file_size = os.path.getsize(file_name)
 num_packets = math.ceil(float(file_size) / float(packet_size))
 WINDOW_LENGTH = 5
 
-print num_packets
 with open(file_name, 'r') as newFile:
 
     if num_packets > WINDOW_LENGTH:
@@ -104,7 +103,6 @@ with open(file_name, 'r') as newFile:
             print "Sending packet"
             s.sendto(str(packet), addr)
 
-        # TODO: Fix for small file sizes
         while 1:
             # receive ack
             ack, addr = s.recvfrom(buf)
