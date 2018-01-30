@@ -50,7 +50,7 @@ while 1:
     print "Sending ACK for packet ", header[0]
 
     # last packet
-    if header[0] == '999':
+    if header[0] == '81':
         break
 
 fileStr = ''
