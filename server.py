@@ -46,48 +46,86 @@ WINDOW_LENGTH = 5
 
 print num_packets
 with open(file_name, 'r') as newFile:
-    # create header info
-    for i in range(WINDOW_LENGTH):
-        data = newFile.read(packet_size)
-        data = str(packet_id) + '|' + data
-        packet_list.append(data)
-        packet_id += 1
 
-    # send packet
-    for packet in packet_list:
-        print "Sending packet"
-        s.sendto(str(packet), addr)
-
-    while 1:
-        # receive ack
-        ack, addr = s.recvfrom(buf)
-        print "Received acknowledgement"
-
-        # in order
-        if (ack != 0):
-            packet_list.pop()
-
+    if num_packets > WINDOW_LENGTH:
+        # create header info
+        for i in range(WINDOW_LENGTH):
             data = newFile.read(packet_size)
             data = str(packet_id) + '|' + data
             packet_list.append(data)
             packet_id += 1
 
-            # last packet
-            if packet_id == num_packets:
-                print "Sending last packet"
-                data = data.split('|', 1)
-                last_data = '99999' + '|' + data[1]
-                s.sendto(str(last_data), addr)
-
-                break
-
+        # send packet
+        for packet in packet_list:
             print "Sending packet"
-            s.sendto(str(data), addr)
+            s.sendto(str(packet), addr)
 
-        # error
-        elif (ack == 0 and packet_id > 4):
-            print "Received error"
+        while 1:
+            # receive ack
+            ack, addr = s.recvfrom(buf)
+            print "Received acknowledgement"
 
+            # in order
+            if (ack != 0):
+                packet_list.pop()
+
+                data = newFile.read(packet_size)
+                data = str(packet_id) + '|' + data
+                packet_list.append(data)
+                packet_id += 1
+
+                # last packet
+                if packet_id == num_packets:
+                    print "Sending last packet"
+                    data = data.split('|', 1)
+                    last_data = '99999' + '|' + data[1]
+                    s.sendto(str(last_data), addr)
+
+                    break
+
+                # send packet
+                packet_sending = data.split('|', 1)
+                print "Sending packet", packet_sending[0]
+                s.sendto(str(data), addr)
+
+            # error
+            elif (ack == 0 and packet_id > 4):
+                print "Received error"
+
+    else:
+        for i in range(int(num_packets)):
+            data = newFile.read(packet_size)
+            data = str(packet_id) + '|' + data
+            packet_list.append(data)
+            packet_id += 1
+
+        # send packet
+        for packet in packet_list:
+            print "Sending packet"
+            s.sendto(str(packet), addr)
+
+        # TODO: Fix for small file sizes, ends up in infinite loop
+        while 1:
+            # receive ack
+            ack, addr = s.recvfrom(buf)
+            print "Received acknowledgement"
+
+            # in order
+            if (ack != 0):
+                packet_list.pop()
+
+                data = newFile.read(packet_size)
+                data = str(packet_id) + '|' + data
+                packet_list.append(data)
+                packet_id += 1
+
+                # last packet
+                if packet_id == num_packets:
+                    print "Sending last packet"
+                    data = data.split('|', 1)
+                    last_data = '99999' + '|' + data[1]
+                    s.sendto(str(last_data), addr)
+                    break
 s.close()
 
 
