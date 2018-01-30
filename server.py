@@ -104,7 +104,7 @@ with open(file_name, 'r') as newFile:
             print "Sending packet"
             s.sendto(str(packet), addr)
 
-        # TODO: Fix for small file sizes, ends up in infinite loop
+        # TODO: Fix for small file sizes
         while 1:
             # receive ack
             ack, addr = s.recvfrom(buf)
@@ -127,9 +127,6 @@ with open(file_name, 'r') as newFile:
                     s.sendto(str(last_data), addr)
                     break
 s.close()
-
-
-# TODO: wait for acknowledgements
 
 
 f.close()
