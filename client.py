@@ -60,7 +60,7 @@ def receive():
 
     packetList = []
     WINDOW_LENGTH = 5
-    LFR = 0 # Last frame Received
+    LPR = 0 # Last packet Received
     LAP = 4 # Largest acceptable packet
     packet_id = 1
 
@@ -72,16 +72,16 @@ def receive():
         header = packetData.split('|', 1)
         packet_id = int(header[0])
 
-        if LFR <= packet_id and packet_id <= LAP:
-            if packet_id == LFR+1:
+        if LPR <= packet_id and packet_id <= LAP:
+            if packet_id == LPR+1:
                 # send ack to server
-                LFR = int(packet_id)
-                LAP = LFR + WINDOW_LENGTH
+                LPR = int(packet_id)
+                LAP = LPR + WINDOW_LENGTH
                 print 'Sending ACK for packet ', header[0]
                 s.sendto(str(header[0]), addr)
                 packetList.append(header[1])
 
-
+        # last packet
         if header[0] == '99999':
             packetList.append(header[1])
             print 'Sending last ACK'

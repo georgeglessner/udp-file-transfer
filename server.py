@@ -61,6 +61,8 @@ def send():
     file_size = os.path.getsize(file_name)
     num_packets = math.ceil(float(file_size) / float(packet_size))
     WINDOW_LENGTH = 5
+    LAR = 0 # Last ack received
+    LPS = 0 # Last packet sent
 
     with open(file_name, 'r') as newFile:
 
@@ -74,6 +76,7 @@ def send():
 
             # send packet
             for packet in packet_list:
+                LPS = int(packet.split('|',1)[0])
                 print 'Sending packet'
                 s.sendto(str(packet), addr)
 
@@ -81,9 +84,10 @@ def send():
                 # receive ack
                 ack, addr = s.recvfrom(buf)
                 print 'Received acknowledgement'
+                LAR = int(ack)
 
                 # in order
-                if (ack != 0):
+                if (LPS - LAR <= WINDOW_LENGTH): # (ack != 0)
                     packet_list.pop()
 
                     data = newFile.read(packet_size)
@@ -131,6 +135,7 @@ def send():
 
             # send packet
             for packet in packet_list:
+                LPS = int(packet.split('|',1)[0])
                 print 'Sending packet'
                 s.sendto(str(packet), addr)
 
@@ -139,9 +144,10 @@ def send():
                 # receive ack
                 ack, addr = s.recvfrom(buf)
                 print 'Received acknowledgement'
+                LAR = int(ack)
 
                 # in order
-                if (ack != 0):
+                if (LPS - LAR <= WINDOW_LENGTH):
                     packet_list.pop()
 
                     data = newFile.read(packet_size)
