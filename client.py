@@ -43,7 +43,7 @@ def start():
     # Obtain filename
     file_name = raw_input('Please enter a filename to transfer: ')
     if not os.path.exists('./' + str(file_name)):
-        print "Invalid file"
+        print 'Invalid file'
         sys.exit(0)
 
     # send file request to server
@@ -59,6 +59,10 @@ def receive():
     global s
 
     packetList = []
+    WINDOW_LENGTH = 5
+    LFR = 0 # Last frame Received
+    LAP = 4 # Largest acceptable packet
+    packet_id = 1
 
     while 1:
         buf = 1024
@@ -66,25 +70,35 @@ def receive():
         # receive data from server
         packetData, addr = s.recvfrom(buf)
         header = packetData.split('|', 1)
-        packetList.append(header[1])
+        packet_id = int(header[0])
 
-        # send ack to server
-        s.sendto(str(header[0]), addr)
-        if header[0] == '99999':
-            print "Sending last ACK"
-        else:
-            print "Sending ACK for packet ", header[0]
+        if LFR <= packet_id and packet_id <= LAP:
+            if packet_id == LFR+1:
+                # send ack to server
+                LFR = int(packet_id)
+                LAP = LFR + WINDOW_LENGTH
+                print 'Sending ACK for packet ', header[0]
+                s.sendto(str(header[0]), addr)
+                packetList.append(header[1])
 
-        # last packet
+
         if header[0] == '99999':
+            packetList.append(header[1])
+            print 'Sending last ACK'
+            s.sendto(str(header[0]), addr)
+            fileStr = ''
+            for packet in packetList:
+                fileStr += packet
+            f = open('client_file', 'wb')
+            f.write(fileStr)
             break
 
     fileStr = ''
     for packet in packetList:
         fileStr += packet
-    f = open('client_file', "wb")
+    f = open('client_file', 'wb')
     f.write(fileStr)
-    print "File complete"
+    print 'File complete'
 
     s.close()
 

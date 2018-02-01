@@ -52,11 +52,11 @@ def send():
 
     data, addr = s.recvfrom(buf)
     file_name = data.strip()
-    print "Received File:", file_name
+    print 'Received File:', file_name
 
-    f = open(file_name, "rb")
+    f = open(file_name, 'rb')
     packet_size = 500
-    packet_id = 0
+    packet_id = 1
     packet_list = []
     file_size = os.path.getsize(file_name)
     num_packets = math.ceil(float(file_size) / float(packet_size))
@@ -74,13 +74,13 @@ def send():
 
             # send packet
             for packet in packet_list:
-                print "Sending packet"
+                print 'Sending packet'
                 s.sendto(str(packet), addr)
 
             while 1:
                 # receive ack
                 ack, addr = s.recvfrom(buf)
-                print "Received acknowledgement"
+                print 'Received acknowledgement'
 
                 # in order
                 if (ack != 0):
@@ -93,7 +93,7 @@ def send():
 
                     # last packet
                     if packet_id == num_packets:
-                        print "Sending last packet"
+                        print 'Sending last packet'
                         data = data.split('|', 1)
                         last_data = '99999' + '|' + data[1]
                         s.sendto(str(last_data), addr)
@@ -102,22 +102,22 @@ def send():
 
                     # send packet
                     packet_sending = data.split('|', 1)
-                    print "Sending packet", packet_sending[0]
+                    print 'Sending packet', packet_sending[0]
                     s.sendto(str(data), addr)
 
                 # error
                 elif (ack == 0 and packet_id > 4):
-                    print "Received error"
+                    print 'Received error'
 
         elif num_packets == 1:
             # only one packet
             data = newFile.read(packet_size)
             data = '99999' + '|' + data
-            print "Sending packet"
+            print 'Sending packet'
             s.sendto(str(data), addr)
 
             ack, addr = s.recvfrom(buf)
-            print "Received acknowledgement"
+            print 'Received acknowledgement'
 
             sys.exit(0)
 
@@ -131,14 +131,14 @@ def send():
 
             # send packet
             for packet in packet_list:
-                print "Sending packet"
+                print 'Sending packet'
                 s.sendto(str(packet), addr)
 
             # loop to receive ack and send packets
             while 1:
                 # receive ack
                 ack, addr = s.recvfrom(buf)
-                print "Received acknowledgement"
+                print 'Received acknowledgement'
 
                 # in order
                 if (ack != 0):
@@ -151,7 +151,7 @@ def send():
 
                     # last packet
                     if packet_id == num_packets:
-                        print "Sending last packet"
+                        print 'Sending last packet'
                         data = data.split('|', 1)
                         last_data = '99999' + '|' + data[1]
                         s.sendto(str(last_data), addr)
