@@ -19,9 +19,7 @@ def start():
     '''
     Bind to socket
     '''
-
     global s
-
     host = ''
 
     # Obtain port address to connect to
@@ -36,7 +34,6 @@ def start():
         sys.exit(0)
 
     s.bind((host, port))
-
     addr = (host, port)
     send()
 
@@ -45,9 +42,7 @@ def send():
     '''
     Send packets to client, receive acknowledgements
     '''
-
     global s
-
     buf = 1024
 
     data, addr = s.recvfrom(buf)
@@ -65,7 +60,6 @@ def send():
     LPS = 0 # Last packet sent
 
     with open(file_name, 'r') as newFile:
-
         if num_packets > WINDOW_LENGTH:
             # create header info
             for i in range(WINDOW_LENGTH):
@@ -89,7 +83,6 @@ def send():
                 # in order
                 if (LPS - LAR <= WINDOW_LENGTH): # (ack != 0)
                     packet_list.pop()
-
                     data = newFile.read(packet_size)
                     data = str(packet_id) + '|' + data
                     packet_list.append(data)
@@ -101,7 +94,6 @@ def send():
                         data = data.split('|', 1)
                         last_data = '99999' + '|' + data[1]
                         s.sendto(str(last_data), addr)
-
                         break
 
                     # send packet
@@ -119,10 +111,8 @@ def send():
             data = '99999' + '|' + data
             print 'Sending packet'
             s.sendto(str(data), addr)
-
             ack, addr = s.recvfrom(buf)
             print 'Received acknowledgement'
-
             sys.exit(0)
 
         else:
@@ -149,7 +139,6 @@ def send():
                 # in order
                 if (LPS - LAR <= WINDOW_LENGTH):
                     packet_list.pop()
-
                     data = newFile.read(packet_size)
                     data = str(packet_id) + '|' + data
                     packet_list.append(data)

@@ -13,12 +13,10 @@ import os
 
 s = socket(AF_INET, SOCK_DGRAM)
 
-
 def start():
     '''
     Connect to socket, ask for file
     '''
-
     global s
 
     # Obtain IP Address, should be local host
@@ -55,7 +53,6 @@ def receive():
     '''
     Receeive packets from server, send acknowledgements
     '''
-
     global s
 
     packetList = []
@@ -99,9 +96,7 @@ def receive():
     f = open('client_file', 'wb')
     f.write(fileStr)
     print 'File complete'
-
     s.close()
-
 
 if __name__ == '__main__':
     start()
