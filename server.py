@@ -11,6 +11,7 @@ import sys
 import select
 import os
 import math
+from time import sleep
 
 s = socket(AF_INET, SOCK_DGRAM)
 
@@ -37,7 +38,6 @@ def start():
     addr = (host, port)
     send()
 
-
 def send():
     '''
     Send packets to client, receive acknowledgements
@@ -50,7 +50,7 @@ def send():
     print 'Received File:', file_name
 
     f = open(file_name, 'rb')
-    packet_size = 500
+    packet_size = 1000
     packet_id = 1
     packet_list = []
     file_size = os.path.getsize(file_name)
@@ -59,6 +59,7 @@ def send():
     LAR = 0 # Last ack received
     LPS = 0 # Last packet sent
 
+    print 'Number of packets', num_packets
     with open(file_name, 'r') as newFile:
         if num_packets > WINDOW_LENGTH:
             # create header info
@@ -67,29 +68,44 @@ def send():
                 data = str(packet_id) + '|' + data
                 packet_list.append(data)
                 packet_id += 1
+                
 
             # send packet
             for packet in packet_list:
                 LPS = int(packet.split('|',1)[0])
                 print 'Sending packet'
+                sleep(.1)
                 s.sendto(str(packet), addr)
 
-            while 1:
-                # receive ack
-                ack, addr = s.recvfrom(buf)
-                print 'Received acknowledgement'
-                LAR = int(ack)
+            s.settimeout(.2)
+            while 1: 
+                while 1:
+                    try:
+                        # receive ack
+                        ack, addr = s.recvfrom(buf)
+                        print ack, LAR
+                        if (int(ack) == (LAR+1)):
+                            print 'Received acknowledgement', ack
+                            LAR = int(ack)
+                            break
+                    except KeyboardInterrupt:
+                        print 'Cancel'
+                        sys.exit(-1)
+                    except timeout:
+                        print 'resending', LAR + 1
+                        s.sendto(str(packet_list[0]), addr) 
+                        sleep(.1)
 
                 # in order
                 if (LPS - LAR <= WINDOW_LENGTH): # (ack != 0)
-                    packet_list.pop()
+                    packet_list.pop(0)
                     data = newFile.read(packet_size)
                     data = str(packet_id) + '|' + data
                     packet_list.append(data)
                     packet_id += 1
 
                     # last packet
-                    if packet_id == num_packets:
+                    if (packet_id - 1) == num_packets:
                         print 'Sending last packet'
                         data = data.split('|', 1)
                         last_data = '99999' + '|' + data[1]
@@ -100,6 +116,7 @@ def send():
                     packet_sending = data.split('|', 1)
                     print 'Sending packet', packet_sending[0]
                     s.sendto(str(data), addr)
+                    sleep(.1)
 
                 # error
                 elif (ack == 0 and packet_id > 4):

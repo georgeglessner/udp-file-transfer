@@ -21,9 +21,9 @@ def start():
 
     # Obtain IP Address, should be local host
     host = raw_input('Please enter IP Address: ')
-    if (host != '127.0.0.1'):
-        print 'Not local host'
-        sys.exit(0)
+    # if (host != '127.0.0.1'):
+    #     print 'Not local host'
+    #     sys.exit(0)
 
     # Obtain port address to connect to
     try:
@@ -68,7 +68,6 @@ def receive():
         packetData, addr = s.recvfrom(buf)
         header = packetData.split('|', 1)
         packet_id = int(header[0])
-
         if LPR <= packet_id and packet_id <= LAP:
             if packet_id == LPR+1:
                 # send ack to server
@@ -92,6 +91,7 @@ def receive():
 
     fileStr = ''
     for packet in packetList:
+        print packet
         fileStr += packet
     f = open('client_file', 'wb')
     f.write(fileStr)
