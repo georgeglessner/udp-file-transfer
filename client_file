@@ -642,19 +642,151 @@ Can you use
 0409 Do you interface well with strangers?
  
 0410 Are you able to recite phone numbers for half-a-dozen computer systems
-but unable to recite yt still exist?
+but unable to recite your own?
  
-0504 Do you remember
-0505 ... mod.ber?
-0506 ... the Stupid People's Court?
-0507 ... Bandy-grams?
+0411 Do you log in before breakfast?
+ 
+0412 Do you consume more than LD-50 caffeine a day?
+ 
+0413 Do you answer either-or questions with "yes"?
+ 
+0414 Do you own an up-to-date copy of any operating system manual?
+0415 ... *every* operating system manual?
+ 
+0416 Do other people have difficulty using your customized environment?
+ 
+0417 Do you dream in any programming languages?
+ 
+0418 Do you have difficulty focusing on three-dimensional objects?
+ 
+0419 Do you ignore mice?
+ 
+0420 Do you despise the CAPS LOCK key?
+ 
+0421 Do you believe menus belong in restaurants?
+ 
+0422 Do you have a Mandelbrot hanging on your wall?
+ 
+0423 Have you ever decorated with magnetic tape or punched cards?
+0424 Do you have a disk platter or a naked floppy hanging in your home?
+ 
+0425 Have you ever seen the dawn?
+0426 ... Twice in a row?
+ 
+0427 Do you use "foobar" in daily conversation?
+0428 ... "bletch"?
+ 
+0429 Do you use the "P convention"?
+0430 Do you automatically respond to any user question with RTFM?
+0431 ... Do you know what it means?
+ 
+0432 Do you think garbage collection means memory management?
+ 
+0433 Do you have problems allocating horizontal space in your room/office?
+ 
+0434 Do you read Scientific American in bars to pick up women?
+ 
+0435 Is your license plate computer-related?
+ 
+0436 Have you ever taken the Purity test?
+ 
+0437 Ever have an out-of-CPU experience?
+ 
+0438 Have you ever set up a blind date over the computer?
+ 
+0439 Do you talk to the person next to you via computer?
+ 
+* Programming
+ 
+0440 Can you write a Fortran compiler?
+0441 ... In TECO?
+ 
+0442 Can you read a machine dump?
+0443 Can you disassemble code in your head?
+ 
+Have you ever written
+0444 ... a compiler?
+0445 ... an operating system?
+0446 ... a device driver?
+0447 ... a text processor?
+0448 ... a display hack?
+0449 ... a database system?
+0450 ... an expert system?
+0451 ... an edge detector?
+0452 ... a real-time control system?
+0453 ... an accounting package?
+0454 ... a virus?
+0455 ... a prophylactic?
+ 
+0456 Have you ever written a biorhythm program?
+0457 ... Did you sell the output?
+0458 ... Was the output arbitrarily invented?
+ 
+0459 Have you ever computed pi to more than a thousand decimal places?
+0460 ... the number e?
+ 
+0461 Ever find a prime number of more than a hundred digits?
+ 
+0462 Have you ever written self-modifying code?
+0463 ... Are you proud of it?
+ 
+0464 Did you ever write a program that ran correctly the first time?
+0465 ... Was it longer than 20 lines?
+0466 ... 100 lines?
+0467 ... Was it in assembly language?
+0468 ... Did it work the second time?
 
-* Phreaking
+0469 Can you solve the Towers of Hanoi recursively?
+0470 ... Non-recursively?
+0471 ... Using the Troff text formatter?
  
-0508 Have you ever built a black box?
+0472 Ever submit an entry to the Obfuscated C code contest?
+0473 ... Did it win?
+0474 ... Did your entry inspire a new rule?
  
-0509 Can you name all of the 'colors' of boxes?
-0510 ... and their associated functions?
-0511 Does your touch tone phone have 16 DTMF buttons on it?
+0475 Do you know Duff's device?
  
-0512 Did the breakup of MaBell create more opportunities for you?
+0476 Do you know Jensen's device?
+ 
+0477 Ever spend ten minutes trying to find a single-character error?
+0478 ... More than an hour?
+0479 ... More than a day?
+0480 ... More than a week?
+0481 ... Did the first person you show it to find it immediately?
+ 
+* Unix
+ 
+0482 Can you use Berkeley Unix?
+0483 .. Non-Berkeley Unix?
+ 
+0484 Can you distinguish between sections 4 and 5 of the Unix manual?
+ 
+0485 Can you find TERMIO in the System V release 2 documentation?
+ 
+0486 Have you ever mounted a tape as a Unix file system?
+ 
+0487 Have you ever built Minix?
+ 
+0488 Can you answer "quiz function ed-command" correctly?
+0489 ... How about "quiz ed-command function"?
+ 
+* Usenet
+ 
+0490 Do you read news?
+0491 ... More than 32 newsgroups?
+0492 ... More than 256 newsgroups?
+0493 ... All the newsgroups?
+ 
+0494 Have you ever posted an article?
+0495 ... Do you post regularly?
+ 
+0496 Have you ever posted a flame?
+0497 ... Ever flame a cross-posting?
+0498 ... Ever flame a flame?
+0499 ... Do you flame regularly?
+ 
+0500 Ever have your program posted to a source newsgroup?
+ 
+0501 Ever forge a posting?
+0502 Ever form a new newsgroup?
+0503 ... Does i

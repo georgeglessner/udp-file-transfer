@@ -53,13 +53,13 @@ def send():
     packet_size = 1000
     packet_id = 1
     packet_list = []
+    acked_packs = 0
     file_size = os.path.getsize(file_name)
     num_packets = math.ceil(float(file_size) / float(packet_size))
     WINDOW_LENGTH = 5
     LAR = 0 # Last ack received
     LPS = 0 # Last packet sent
 
-    print 'Number of packets', num_packets
     with open(file_name, 'r') as newFile:
         if num_packets > WINDOW_LENGTH:
             # create header info
@@ -73,9 +73,10 @@ def send():
             # send packet
             for packet in packet_list:
                 LPS = int(packet.split('|',1)[0])
-                print 'Sending packet'
-                sleep(.1)
+                print 'Sending packet', packet[0]
                 s.sendto(str(packet), addr)
+                sleep(.1)
+
 
             s.settimeout(.2)
             while 1: 
@@ -83,9 +84,9 @@ def send():
                     try:
                         # receive ack
                         ack, addr = s.recvfrom(buf)
-                        print ack, LAR
                         if (int(ack) == (LAR+1)):
                             print 'Received acknowledgement', ack
+                            acked_packs += 1
                             LAR = int(ack)
                             break
                     except KeyboardInterrupt:
@@ -105,7 +106,7 @@ def send():
                     packet_id += 1
 
                     # last packet
-                    if (packet_id - 1) == num_packets:
+                    if(acked_packs == num_packets):
                         print 'Sending last packet'
                         data = data.split('|', 1)
                         last_data = '99999' + '|' + data[1]
