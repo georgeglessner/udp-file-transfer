@@ -111,7 +111,7 @@ def send():
                             sleep(.1)
 
                 # in order
-                if LPS - LAR <= WINDOW_LENGTH:  # (ack != 0)
+                if LPS - LAR <= WINDOW_LENGTH:
                     packet_list.pop(0)
                     data = newFile.read(packet_size)
                     data = str(packet_id) + '|' + data
@@ -132,9 +132,9 @@ def send():
                     s.sendto(str(data), addr)
                     sleep(.1)
                 elif ack == 0 and packet_id > 4:
-
                     # error
                     print 'Received error'
+                    
         elif num_packets == 1:
             # only one packet
             data = newFile.read(packet_size)

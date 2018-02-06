@@ -92,7 +92,6 @@ def receive():
                     print 'Sending ACK for packet ', packet_id
                     s.sendto(str(packet_id), addr)
                     packetList.append(header[1])
-                    #ack_needed += 1
                     acks_sent.append(packet_id)
                 else:
                     s.sendto(str(packet_id), addr)
