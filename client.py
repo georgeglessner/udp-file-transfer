@@ -22,7 +22,8 @@ def start():
 
     # Obtain IP Address, should be local host
     host = raw_input('Please enter IP Address: ')
-    if (host != '127.0.0.1' or host != '10.0.0.1' or host != '10.0.0.2'):
+    # local loopback, mininet servers
+    if not (host == '127.0.0.1' or host == '10.0.0.1' or host == '10.0.0.2'):
         print 'Not local host'
         sys.exit(0)
 
@@ -80,7 +81,6 @@ def receive():
             packet_id = int(header[0])
 
         # if packet_id is in window
-        print LPR, packet_id, LAP, ack_needed
         if LPR <= packet_id and packet_id <= LAP:
             # if packet is the ack needed
             if packet_id == ack_needed:

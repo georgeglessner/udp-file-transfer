@@ -99,7 +99,7 @@ def send():
                         sys.exit(-1)
                     except timeout:
                         # resend packet
-                        print 'resending', LAR + 1
+                        print 'Resending', LAR + 1
                         # dont duplicate the append of resend
                         if packet_list[0][0] == 'R':
                             s.sendto(str(packet_list[0]), addr)
@@ -136,7 +136,6 @@ def send():
                     # error
                     print 'Received error'
         elif num_packets == 1:
-
             # only one packet
             data = newFile.read(packet_size)
             data = '99999' + '|' + data
@@ -146,7 +145,6 @@ def send():
             print 'Received acknowledgement'
             sys.exit(0)
         else:
-
             # 2-4 packets
             for i in range(int(num_packets)):
                 data = newFile.read(packet_size)
@@ -162,7 +160,6 @@ def send():
 
             # loop to receive ack and send packets
             while 1:
-
                 # receive ack
                 (ack, addr) = s.recvfrom(buf)
                 print 'Received acknowledgement'
