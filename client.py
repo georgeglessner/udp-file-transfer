@@ -13,6 +13,7 @@ import os
 
 s = socket(AF_INET, SOCK_DGRAM)
 
+
 def start():
     '''
     Connect to socket, ask for file
@@ -21,9 +22,9 @@ def start():
 
     # Obtain IP Address, should be local host
     host = raw_input('Please enter IP Address: ')
-    # if (host != '127.0.0.1'):
-    #     print 'Not local host'
-    #     sys.exit(0)
+    if (host != '127.0.0.1' or host != '10.0.0.1' or host != '10.0.0.2'):
+        print 'Not local host'
+        sys.exit(0)
 
     # Obtain port address to connect to
     try:
@@ -57,8 +58,8 @@ def receive():
 
     packetList = []
     WINDOW_LENGTH = 5
-    LPR = 0 # Last packet Received
-    LAP = 5 # Largest acceptable packet
+    LPR = 0  # Last packet Received
+    LAP = 5  # Largest acceptable packet
     packet_id = 1
     ack_needed = 0
     acks_sent = []
@@ -69,6 +70,7 @@ def receive():
         # receive data from server
         packetData, addr = s.recvfrom(buf)
         header = packetData.split('|', 1)
+        # resend ack received
         if 'RESEND' in header[0]:
             header[0] = header[0][6:]
             packet_id = int(header[0])
@@ -77,23 +79,23 @@ def receive():
         else:
             packet_id = int(header[0])
 
-        
         # if packet_id is in window
         print LPR, packet_id, LAP, ack_needed
         if LPR <= packet_id and packet_id <= LAP:
+            # if packet is the ack needed
             if packet_id == ack_needed:
                 # send ack to server
                 LPR = int(packet_id)
                 LAP = LPR + WINDOW_LENGTH
+                # check to see if pack is in ack_sent list
                 if packet_id not in acks_sent:
                     print 'Sending ACK for packet ', packet_id
                     s.sendto(str(packet_id), addr)
                     packetList.append(header[1])
-                    #ack_needed += 1 
+                    #ack_needed += 1
                     acks_sent.append(packet_id)
                 else:
                     s.sendto(str(packet_id), addr)
-
 
         # last packet
         if header[0] == '99999':
@@ -107,6 +109,7 @@ def receive():
             f.write(fileStr)
             break
 
+    # write to client_file
     fileStr = ''
     for packet in packetList:
         fileStr += packet
@@ -114,6 +117,7 @@ def receive():
     f.write(fileStr)
     print 'File complete'
     s.close()
+
 
 if __name__ == '__main__':
     start()

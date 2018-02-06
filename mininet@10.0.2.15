@@ -1,20 +1,16 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
-# ----- server.py -----
-
 '''
 Reliable File Transfer using UDP
 Author: George Glessner, Jacob Craffey
 Python Version: 2.7
 '''
+# ----- server.py -----
+#!/usr/bin/env python
 
 from socket import *
 import sys
 import select
 import os
 import math
-from time import sleep
 
 s = socket(AF_INET, SOCK_DGRAM)
 
@@ -23,7 +19,6 @@ def start():
     '''
     Bind to socket
     '''
-
     global s
     host = ''
 
@@ -34,7 +29,7 @@ def start():
         print 'Invalid Port'
         sys.exit(0)
 
-    if port < 1 or port > 65535:
+    if(port < 1 or port > 65535):
         print 'Invalid Port'
         sys.exit(0)
 
@@ -47,28 +42,25 @@ def send():
     '''
     Send packets to client, receive acknowledgements
     '''
-
     global s
     buf = 1024
 
-    (data, addr) = s.recvfrom(buf)
+    data, addr = s.recvfrom(buf)
     file_name = data.strip()
     print 'Received File:', file_name
 
     f = open(file_name, 'rb')
-    packet_size = 1000
+    packet_size = 500
     packet_id = 1
     packet_list = []
-    acked_packs = 0 # acknowledged packets
     file_size = os.path.getsize(file_name)
     num_packets = math.ceil(float(file_size) / float(packet_size))
     WINDOW_LENGTH = 5
-    LAR = 0  # Last ack received
-    LPS = 0  # Last packet sent
+    LAR = 0 # Last ack received
+    LPS = 0 # Last packet sent
 
     with open(file_name, 'r') as newFile:
         if num_packets > WINDOW_LENGTH:
-
             # create header info
             for i in range(WINDOW_LENGTH):
                 data = newFile.read(packet_size)
@@ -78,48 +70,26 @@ def send():
 
             # send packet
             for packet in packet_list:
-                LPS = int(packet.split('|', 1)[0])
+                LPS = int(packet.split('|',1)[0])
                 print 'Sending packet'
                 s.sendto(str(packet), addr)
-                sleep(.1)
 
-            s.settimeout(.2)
             while 1:
-                while 1:
-                    try:
-                        # receive ack
-                        (ack, addr) = s.recvfrom(buf)
-                        if int(ack) == LAR + 1:
-                            print 'Received acknowledgement', ack
-                            acked_packs += 1
-                            LAR = int(ack)
-                            break
-                    except KeyboardInterrupt:
-                        print 'Cancel'
-                        sys.exit(-1)
-                    except timeout:
-                        # resend packet
-                        print 'resending', LAR + 1
-                        # dont duplicate the append of resend
-                        if packet_list[0][0] == 'R':
-                            s.sendto(str(packet_list[0]), addr)
-                            sleep(.1)
-                        else:
-                            # append RESEND to packet
-                            packet_list[0] = 'RESEND' + packet_list[0]
-                            s.sendto(str(packet_list[0]), addr)
-                            sleep(.1)
+                # receive ack
+                ack, addr = s.recvfrom(buf)
+                print 'Received acknowledgement'
+                LAR = int(ack)
 
                 # in order
-                if LPS - LAR <= WINDOW_LENGTH:  # (ack != 0)
-                    packet_list.pop(0)
+                if (LPS - LAR <= WINDOW_LENGTH): # (ack != 0)
+                    packet_list.pop()
                     data = newFile.read(packet_size)
                     data = str(packet_id) + '|' + data
                     packet_list.append(data)
                     packet_id += 1
 
                     # last packet
-                    if acked_packs == num_packets:
+                    if packet_id == num_packets:
                         print 'Sending last packet'
                         data = data.split('|', 1)
                         last_data = '99999' + '|' + data[1]
@@ -128,25 +98,24 @@ def send():
 
                     # send packet
                     packet_sending = data.split('|', 1)
-                    print 'Sending packet'
+                    print 'Sending packet', packet_sending[0]
                     s.sendto(str(data), addr)
-                    sleep(.1)
-                elif ack == 0 and packet_id > 4:
 
-                    # error
+                # error
+                elif (ack == 0 and packet_id > 4):
                     print 'Received error'
-        elif num_packets == 1:
 
+        elif num_packets == 1:
             # only one packet
             data = newFile.read(packet_size)
             data = '99999' + '|' + data
             print 'Sending packet'
             s.sendto(str(data), addr)
-            (ack, addr) = s.recvfrom(buf)
+            ack, addr = s.recvfrom(buf)
             print 'Received acknowledgement'
             sys.exit(0)
-        else:
 
+        else:
             # 2-4 packets
             for i in range(int(num_packets)):
                 data = newFile.read(packet_size)
@@ -156,20 +125,19 @@ def send():
 
             # send packet
             for packet in packet_list:
-                LPS = int(packet.split('|', 1)[0])
+                LPS = int(packet.split('|',1)[0])
                 print 'Sending packet'
                 s.sendto(str(packet), addr)
 
             # loop to receive ack and send packets
             while 1:
-
                 # receive ack
-                (ack, addr) = s.recvfrom(buf)
+                ack, addr = s.recvfrom(buf)
                 print 'Received acknowledgement'
                 LAR = int(ack)
 
                 # in order
-                if LPS - LAR <= WINDOW_LENGTH:
+                if (LPS - LAR <= WINDOW_LENGTH):
                     packet_list.pop()
                     data = newFile.read(packet_size)
                     data = str(packet_id) + '|' + data
