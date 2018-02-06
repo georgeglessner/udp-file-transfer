@@ -61,6 +61,7 @@ def receive():
     LAP = 5 # Largest acceptable packet
     packet_id = 1
     ack_needed = 0
+    acks_sent = []
 
     while 1:
         buf = 1024
@@ -78,16 +79,21 @@ def receive():
 
         
         # if packet_id is in window
-
+        print LPR, packet_id, LAP, ack_needed
         if LPR <= packet_id and packet_id <= LAP:
             if packet_id == ack_needed:
                 # send ack to server
                 LPR = int(packet_id)
                 LAP = LPR + WINDOW_LENGTH
-                print 'Sending ACK for packet ', packet_id
-                s.sendto(str(packet_id), addr)
-                packetList.append(header[1])
-                ack_needed += 1
+                if packet_id not in acks_sent:
+                    print 'Sending ACK for packet ', packet_id
+                    s.sendto(str(packet_id), addr)
+                    packetList.append(header[1])
+                    #ack_needed += 1 
+                    acks_sent.append(packet_id)
+                else:
+                    s.sendto(str(packet_id), addr)
+
 
         # last packet
         if header[0] == '99999':
