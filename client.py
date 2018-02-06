@@ -58,8 +58,9 @@ def receive():
     packetList = []
     WINDOW_LENGTH = 5
     LPR = 0 # Last packet Received
-    LAP = 4 # Largest acceptable packet
+    LAP = 5 # Largest acceptable packet
     packet_id = 1
+    ack_needed = 0
 
     while 1:
         buf = 1024
@@ -67,15 +68,26 @@ def receive():
         # receive data from server
         packetData, addr = s.recvfrom(buf)
         header = packetData.split('|', 1)
-        packet_id = int(header[0])
+        if 'RESEND' in header[0]:
+            header[0] = header[0][6:]
+            packet_id = int(header[0])
+            ack_needed = packet_id
+
+        else:
+            packet_id = int(header[0])
+
+        
+        # if packet_id is in window
+
         if LPR <= packet_id and packet_id <= LAP:
-            if packet_id == LPR+1:
+            if packet_id == ack_needed:
                 # send ack to server
                 LPR = int(packet_id)
                 LAP = LPR + WINDOW_LENGTH
-                print 'Sending ACK for packet ', header[0]
-                s.sendto(str(header[0]), addr)
+                print 'Sending ACK for packet ', packet_id
+                s.sendto(str(packet_id), addr)
                 packetList.append(header[1])
+                ack_needed += 1
 
         # last packet
         if header[0] == '99999':
@@ -91,7 +103,6 @@ def receive():
 
     fileStr = ''
     for packet in packetList:
-        print packet
         fileStr += packet
     f = open('client_file', 'wb')
     f.write(fileStr)

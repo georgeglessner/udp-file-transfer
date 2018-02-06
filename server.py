@@ -73,7 +73,7 @@ def send():
             # send packet
             for packet in packet_list:
                 LPS = int(packet.split('|',1)[0])
-                print 'Sending packet', packet[0]
+                print 'Sending packet'
                 s.sendto(str(packet), addr)
                 sleep(.1)
 
@@ -94,8 +94,13 @@ def send():
                         sys.exit(-1)
                     except timeout:
                         print 'resending', LAR + 1
-                        s.sendto(str(packet_list[0]), addr) 
-                        sleep(.1)
+                        if packet_list[0][0] == 'R':
+                            s.sendto(str(packet_list[0]), addr) 
+                            sleep(.1)
+                        else:
+                            packet_list[0] = 'RESEND' + packet_list[0]
+                            s.sendto(str(packet_list[0]), addr) 
+                            sleep(.1)
 
                 # in order
                 if (LPS - LAR <= WINDOW_LENGTH): # (ack != 0)
@@ -115,7 +120,7 @@ def send():
 
                     # send packet
                     packet_sending = data.split('|', 1)
-                    print 'Sending packet', packet_sending[0]
+                    print 'Sending packet'
                     s.sendto(str(data), addr)
                     sleep(.1)
 
